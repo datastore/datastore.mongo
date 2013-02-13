@@ -1,0 +1,9 @@
+*.pyc
+build/
+*.egg-info
+dist
+.tm_properties
+pypi/
+.tox
+.database
+venv/
