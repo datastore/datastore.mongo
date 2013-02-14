@@ -8,7 +8,7 @@ pkgname = 'datastore.mongo'
 # gather the package information
 main_py = open('datastore/mongo/__init__.py').read()
 metadata = dict(re.findall("__([a-z]+)__ = '([^']+)'", main_py))
-packages = filter(lambda p: p.startswith(pkgname), find_packages())
+packages = filter(lambda p: p.startswith('datastore'), find_packages())
 
 # convert the readme to pypi compatible rst
 try:
@@ -34,7 +34,8 @@ setup(
     'mongodb',
   ],
   packages=packages,
-  install_requires=['datastore>=0.3.0'],
+  namespace_packages=['datastore'],
+  install_requires=['datastore>=0.3.3', 'pymongo==2.4.2'],
   test_suite='datastore.mongo.test',
   license='MIT License',
   classifiers=[

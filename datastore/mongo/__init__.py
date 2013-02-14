@@ -1,5 +1,5 @@
 
-__version__ = '0.1.0'
+__version__ = '0.1.1'
 __author__ = 'Juan Batiz-Benet'
 __email__ = 'juan@benet.ai'
 __doc__ = '''
@@ -14,7 +14,7 @@ Tested with:
 
 
 import pymongo
-import datastore
+import datastore.core
 
 
 class Doc(object):
@@ -26,7 +26,27 @@ class Doc(object):
 
 
 class MongoDatastore(datastore.Datastore):
-  '''Represents a Mongo database as a datastore.'''
+  '''Represents a Mongo database as a datastore.
+
+  Hello World:
+
+      >>> import pymongo
+      >>> import datastore.mongo
+      >>>
+      >>> conn = pymongo.Connection()
+      >>> ds = datastore.mongo.MongoDatastore(conn.test_db)
+      >>>
+      >>> hello = datastore.Key('hello')
+      >>> ds.put(hello, 'world')
+      >>> ds.contains(hello)
+      True
+      >>> ds.get(hello)
+      'world'
+      >>> ds.delete(hello)
+      >>> ds.get(hello)
+      None
+
+  '''
 
   def __init__(self, mongoDatabase):
     self.database = mongoDatabase
@@ -172,25 +192,3 @@ class MongoQuery(object):
     keys = [cls.field(o.field) for o in orders]
     vals = [1 if o.isAscending() else -1 for o in orders]
     return zip(keys, vals)
-
-
-'''
-Hello World:
-
-    >>> import pymongo
-    >>> import datastore.mongo
-    >>>
-    >>> conn = pymongo.Connection()
-    >>> ds = datastore.mongo.MongoDatastore(conn.test_db)
-    >>>
-    >>> hello = datastore.Key('hello')
-    >>> ds.put(hello, 'world')
-    >>> ds.contains(hello)
-    True
-    >>> ds.get(hello)
-    'world'
-    >>> ds.delete(hello)
-    >>> ds.get(hello)
-    None
-
-'''
