@@ -179,7 +179,7 @@ class MongoQuery(object):
     '''Transform given `filter` into a mongodb filter tuple.'''
     if filter.op == '=':
       return filter.field, filter.value
-    return filter.filter, { cls.operators[filter.op] : filter.value }
+    return filter.field, { cls.operators[filter.op] : filter.value }
 
   @classmethod
   def filters(cls, filters):
