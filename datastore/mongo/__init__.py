@@ -14,6 +14,7 @@ Tested with:
 
 
 import pymongo
+import itertools
 import datastore.core
 
 
@@ -184,7 +185,25 @@ class MongoQuery(object):
   @classmethod
   def filters(cls, filters):
     '''Transform given `filters` into a mongodb filter dictionary.'''
-    return dict([cls.filter(f) for f in filters])
+    filter_list = [cls.filter(f) for f in filters]
+    key_for_filter = lambda f: f[0]
+    sorted_filters = sorted(filter_list, key=key_for_filter)
+    grouped_filters = itertools.groupby(sorted_filters, key_for_filter)
+
+    def combine_filters(field, grouped):
+      filters = [gf[1] for gf in grouped]
+      is_conditional = lambda f: hasattr(f, 'items')
+      conditionals = filter(is_conditional, filters)
+      if len(conditionals):
+        if len(conditionals) < len(filters):
+          raise ValueError('invalid combination of conditional and non-conditional filters for field %s' % field)
+        return field, dict(f.items()[0] for f in conditionals)
+      elif len(filters) > 1:
+        raise ValueError('multiple filters for field %s' % field)
+      else:
+        return field, filters[0]
+
+    return dict(combine_filters(field,group) for (field,group) in grouped_filters)
 
   @classmethod
   def orders(cls, orders):
