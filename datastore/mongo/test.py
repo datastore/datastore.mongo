@@ -37,6 +37,18 @@ class TestMongoDatastore(TestDatastore):
     res = list(ms.query(Query(pk).filter('age','>',30)))
     assert res == [a]
 
+    res = list(ms.query(Query(pk).filter('age','>',30).filter('age','<',30)))
+    assert res == []
+
+    res = list(ms.query(Query(pk).filter('age','=',35)))
+    assert res == [a]
+
+    try:
+      res = list(ms.query(Query(pk).filter('age','>',30).filter('age','=',30)))
+      assert False
+    except ValueError:
+      pass
+
     res = list(ms.query(Query(pk).filter('name','!=','A')))
     assert res == [b]
 
